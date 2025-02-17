@@ -1,0 +1,31 @@
+{
+  "Header": {
+    "Title": "Hello World!"
+  },
+  "Home": {
+    "See More": "See More"
+  },
+  "Search": {
+    "Search": "Search"
+  },
+  "Footer": {
+    "Contact": "Contact"
+  },
+  "Loading": {
+    "Loading": "Loading..."
+  },
+  "Error": {
+    "Error": "Error",
+    "Try again": "Try again",
+    "Back To Home": "Back To Home"
+  },
+  "Admin": {
+    "Admin": "Admin"
+  },
+  "Common": {
+    "Cancel": "Cancel"
+  },
+  "Settings": {
+    "Settings": "Settings"
+  }
+}

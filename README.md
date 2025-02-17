@@ -34,3 +34,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Tip
+
+![1](https://img.shields.io/badge/1-%E2%9C%85-green)
+![2](https://img.shields.io/badge/2-%E2%9C%85-green)
+![3](https://img.shields.io/badge/3-%E2%9C%85-green)
+![4](https://img.shields.io/badge/4-%E2%9C%85-green)
+![5](https://img.shields.io/badge/5-%E2%9C%85-green)
+![6](https://img.shields.io/badge/6-%E2%9C%85-green)
+![7](https://img.shields.io/badge/7-%E2%9C%85-green)

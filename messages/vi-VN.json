@@ -1,0 +1,31 @@
+{
+  "Header": {
+    "Title": "xin chào"
+  },
+  "Home": {
+    "See More": "Xem thêm"
+  },
+  "Search": {
+    "Search": "Tìm kiếm"
+  },
+  "Footer": {
+    "Contact": "Liên hệ"
+  },
+  "Loading": {
+    "Loading": "Đang tải..."
+  },
+  "Error": {
+    "Error": "Lỗi",
+    "Try again": "Thử lại",
+    "Back To Home": "Trở về trang chủ"
+  },
+  "Admin": {
+    "Admin": "Quản trị viên"
+  },
+  "Common": {
+    "Cancel": "Hủy"
+  },
+  "Settings": {
+    "Settings": "Cài đặt"
+  }
+}

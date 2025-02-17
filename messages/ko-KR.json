@@ -1,0 +1,31 @@
+{
+  "Header": {
+    "Title": "환영합니다"
+  },
+  "Home": {
+    "See More": "더 보기"
+  },
+  "Search": {
+    "Search": "검색"
+  },
+  "Footer": {
+    "Contact": "연락처"
+  },
+  "Loading": {
+    "Loading": "로딩중..."
+  },
+  "Error": {
+    "Error": "에러",
+    "Try again": "다시 시도",
+    "Back To Home": "홈으로 돌아가기"
+  },
+  "Admin": {
+    "Admin": "관리자"
+  },
+  "Common": {
+    "Cancel": "취소"
+  },
+  "Settings": {
+    "Settings": "설정"
+  }
+}
