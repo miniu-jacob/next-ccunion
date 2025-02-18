@@ -49,6 +49,7 @@ const settingSchema = new Schema<ISetting>(
       {
         name: { type: String, required: true, set: (value: string) => Buffer.from(value).toString("utf8") },
         code: { type: String, required: true },
+        slug: { type: String, required: true }, // URL 경로에 사용할 slug 필드 추가
       },
     ],
     defaultLanguage: { type: String, required: true },

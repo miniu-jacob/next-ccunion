@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-export const DropdownButton = () => {
+export const ThemeToggleButton = () => {
   const { setTheme } = useTheme();
 
   return (

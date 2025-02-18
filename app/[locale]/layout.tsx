@@ -5,7 +5,6 @@ import React from "react";
 import { Inter as FontSans } from "next/font/google";
 import "../globals.css";
 import { getSetting } from "@/lib/actions/setting.actions";
-import { clog } from "@/lib/jlogger";
 import { getMessages } from "next-intl/server";
 import ClientProviders from "@/components/shared/client-providers";
 import { NextIntlClientProvider } from "next-intl";
@@ -59,8 +58,6 @@ export default async function RootLayout({
 
   const messages = await getMessages({ locale });
 
-  clog.info("[layout] locale", locale);
-  clog.info("[layout] messages", messages?.Home);
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>

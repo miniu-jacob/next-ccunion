@@ -7,13 +7,15 @@ import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 
 // 로그인 없이 접근 가능한 페이지 경로 정의
-const publicPages: string[] = ["/", "/login", "/register", "/search", "/page/(.*)"];
+const publicPages: string[] = ["/", "/login", "/register", "/about", "/blog", "/contact", "/search", "/page/(.*)"];
 
 /**
  * nonDefaultPrefixes 추출
  * 기본 언어(ko-KR)는 prefix가 없으므로, 나머지 언어의 prefix만 추출 (예: "en", "vn")
  */
-const nonDefaultPrefixes = Object.entries((routing.localePrefix as { mode: "as-needed"; prefixes: Record<string, string> }).prefixes)
+const nonDefaultPrefixes = Object.entries(
+  (routing.localePrefix as { mode: "as-needed"; prefixes: Record<string, string> }).prefixes,
+)
   .filter(([code]) => code !== routing.defaultLocale)
   .map(([_, prefix]) => prefix.replace(/^\//, "")); // 앞의 "/" 제거
 
@@ -48,7 +50,13 @@ const { auth } = NextAuth(authConfig);
  * - 비공개 페이지일 경우, 인증 여부를 확인하여 인증되지 않았다면 로그인 페이지로 리다이렉션한다.
  */
 export default auth((req) => {
-  const { pathname } = req.nextUrl;
+  let { pathname } = req.nextUrl;
+
+  // URL 정규화: 기본 언어 SLUG(예: "/ko")를 "/"로 변경
+  if (pathname.startsWith("/ko")) {
+    pathname = pathname.replace(/^\/ko/, "");
+    if (pathname === "") pathname = "/";
+  }
 
   // 요청된 페이지가 공개 페이지 목록에 있는지 확인
   const isPublicPage = publicPathnameRegex.test(pathname);

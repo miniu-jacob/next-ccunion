@@ -6,6 +6,7 @@ import { z } from "zod";
 export const SiteLanguageSchema = z.object({
   name: z.string().min(1, "Language name is required"), // 언어 이름
   code: z.string().min(1, "Language code is required"), // 언어 코드
+  slug: z.string().min(1, "Language slug is required"), // 언어 슬러그 (URL 에서 사용할 슬러그)
 });
 
 // 캐러셀 검증 스키마

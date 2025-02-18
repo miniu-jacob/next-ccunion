@@ -47,6 +47,7 @@ export const settingsData = {
       availableLanguages: i18n.locales.map((locale) => ({
         code: locale.code,
         name: locale.name,
+        slug: locale.slug,
       })),
       defaultLanguage: i18n.defaultLocale,
     },
