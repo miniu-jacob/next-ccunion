@@ -2,24 +2,20 @@
 
 import React from "react";
 
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter as FontSans } from "next/font/google";
 import "../globals.css";
 import { getSetting } from "@/lib/actions/setting.actions";
-import { clog } from "@/lib/jlogger";
 import { getMessages } from "next-intl/server";
 import ClientProviders from "@/components/shared/client-providers";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
+import { cn } from "@/lib/utils";
+import Header from "@/components/shared/header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fontSans = FontSans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export async function generateMetadata() {
@@ -62,13 +58,14 @@ export default async function RootLayout({
 
   const messages = await getMessages({ locale });
 
-  clog.info("[layout] locale", locale);
-  clog.info("[layout] messages", messages?.Home);
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`min-h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ClientProviders setting={{ ...setting }}>{children}</ClientProviders>
+          <ClientProviders setting={{ ...setting }}>
+            <Header />
+            {children}
+          </ClientProviders>
         </NextIntlClientProvider>
       </body>
     </html>
