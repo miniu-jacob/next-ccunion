@@ -67,10 +67,10 @@ const { auth } = NextAuth(authConfig);
  * - 프로덕션(`production`): `process.env.NEXT_PUBLIC_SITE_URL` 사용
  */
 
-const baseURL =
+const baseURL = new URL(
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : process.env.NEXT_PUBLIC_SITE_URL || "https://next-ccunion.vercel.app";
+    : process.env.NEXT_PUBLIC_SITE_URL || "https://next-ccunion.vercel.app").toString();
 
 export default auth((req) => {
   let { pathname } = req.nextUrl;
@@ -90,7 +90,9 @@ export default auth((req) => {
   } else {
     // 인증되지 않은 경우, 로그인 페이지로 리다이렉션 (callbackUrl 포함)
     if (!req.auth) {
-      const redirectUrl = new URL(`/login?callbackUrl=${encodeURIComponent(req.nextUrl.pathname)}`, baseURL) // 로그인 후 이동할 페이지
+      const redirectUrl = new URL(`/login?callbackUrl=${encodeURIComponent(req.nextUrl.pathname)}`,
+      new URL(baseURL).toString()
+    ) // 로그인 후 이동할 페이지
       return Response.redirect(redirectUrl);
     } else {
       return intlMiddleware(req);
