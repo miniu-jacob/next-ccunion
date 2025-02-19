@@ -59,6 +59,19 @@ const { auth } = NextAuth(authConfig);
  * - 공개 페이지(publicPages)라면 다국어 미들웨어(intlMiddleware)를 실행
  * - 비공개 페이지일 경우, 인증 여부를 확인하여 인증되지 않았다면 로그인 페이지로 리다이렉션한다.
  */
+
+// req.nextUrl.origin을 사용할 때 반드시 https:// 또는 http:// 가 포함되도록 보장한다.
+/**
+ * ✅ 환경별 `baseURL`을 자동 설정
+ * - 개발 환경(`development`): `http://localhost:3000`
+ * - 프로덕션(`production`): `process.env.NEXT_PUBLIC_SITE_URL` 사용
+ */
+
+const baseURL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_SITE_URL || "https://next-ccunion.vercel.app";
+
 export default auth((req) => {
   let { pathname } = req.nextUrl;
 
@@ -77,12 +90,8 @@ export default auth((req) => {
   } else {
     // 인증되지 않은 경우, 로그인 페이지로 리다이렉션 (callbackUrl 포함)
     if (!req.auth) {
-      const newUrl = new URL(
-        `/login?callbackUrl=${encodeURIComponent(req.nextUrl.pathname) || "/"}`, // 로그인 후 이동할 페이지
-        req.nextUrl.origin, // 현재 도메인
-      );
-
-      return Response.redirect(newUrl);
+      const redirectUrl = new URL(`/login?callbackUrl=${encodeURIComponent(req.nextUrl.pathname)}`, baseURL) // 로그인 후 이동할 페이지
+      return Response.redirect(redirectUrl);
     } else {
       return intlMiddleware(req);
     }
