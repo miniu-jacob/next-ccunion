@@ -3,8 +3,14 @@
     "Title": "Hello World!"
   },
   "Home": {
-    "See More": "See More"
-  },
+    "See More": "See More",
+    "Our Group": "Chungcheong Entrepreneurs Association",
+    "Welcome Message": "Welcome to be with us.",
+    "Overseas Business": "Overseas Business",
+    "Exchanges and Cooperation": "Exchanges and Cooperation",
+    "Friendship": "Friendship Promotion",
+    "Guide Message": "The Chungcheong Entrepreneurs Association always welcomes your participation."
+},
   "Search": {
     "Search": "Search"
   },

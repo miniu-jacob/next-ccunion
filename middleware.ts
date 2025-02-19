@@ -7,7 +7,17 @@ import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 
 // 로그인 없이 접근 가능한 페이지 경로 정의
-const publicPages: string[] = ["/", "/login", "/register", "/about", "/blog", "/contact", "/search", "/page/(.*)"];
+const publicPages: string[] = [
+  "/",
+  "/login",
+  "/register",
+  "/about",
+  "/blog",
+  "/contact",
+  "/search",
+  "/blogpost/(.*)",
+  "/page/(.*)",
+];
 
 /**
  * nonDefaultPrefixes 추출

@@ -17,3 +17,4 @@ export type SiteLanguage = z.infer<typeof SiteLanguageSchema>;
 
 // Setting 타입 정의
 export type ISettingInput = z.infer<typeof SettingInputSchema>;
+

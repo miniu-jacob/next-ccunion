@@ -11,7 +11,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Header from "@/components/shared/header";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -59,13 +58,10 @@ export default async function RootLayout({
   const messages = await getMessages({ locale });
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className="scroll-p-24 scroll-smooth">
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ClientProviders setting={{ ...setting }}>
-            <Header />
-            {children}
-          </ClientProviders>
+          <ClientProviders setting={{ ...setting }}>{children}</ClientProviders>
         </NextIntlClientProvider>
       </body>
     </html>
