@@ -1,4 +1,4 @@
-// app/not-found.tsx
+// app/[locale]/not-found.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";

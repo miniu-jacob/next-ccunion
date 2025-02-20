@@ -9,7 +9,10 @@ import { clog } from "./lib/jlogger";
 import { i18n } from "./i18n-config";
 import { NextResponse } from "next/server";
 
-// 로그인 없이 접근 가능한 페이지 경로 정의
+/* PUBLIC ROUTE (NO LOGIN REQUIRED)
+ * =========================================
+ * 0) 공개/비공개 경로 정의
+ * ========================================= */
 const publicPages: string[] = [
   "/",
   "/login",
@@ -24,116 +27,152 @@ const publicPages: string[] = [
 
 // PROTECTED ROUTES (LOGIN REQUIRED)
 const protectedRoutes: string[] = ["/dashboard", "/profile", "/admin"];
-// LANGUAGE CODE LIST (ko, en, vn only)
-const locales = i18n.locales.map((locale) => locale.slug);
 
-// 다국어 미들웨어 생성 (createMiddleware 함수 사용, routing 객체 전달)
+/* i18n LOCALE PREFIX
+ * =========================================
+ * 1) i18n locale 목록 및 prefix 관리
+ * ========================================= */
+const locales = i18n.locales.map((locale) => locale.slug); // 전체 [ "ko", "en", "vn" ]
+const defaultLocale = i18n.defaultLocale; // 예: "ko"
+const pathLocales = locales.filter((l) => l !== defaultLocale); // 예: [ "en", "vn" ] => prefix 로 "/en", "vn" 사용
+
+/* 다국어 미들웨어 생성(routing 객체 전달, createMiddleware 함수 사용)
+ * =========================================
+ * 2) next-intl / next-auth 설정
+ * ========================================= */
 const intlMiddleware = createMiddleware(routing);
 
+// nextAuth 인증 미들웨어 래퍼
 const { auth } = NextAuth(authConfig);
 
-/**
- * ✅ 환경별 `baseURL`을 자동 설정
- * - 개발 환경(`development`): `http://localhost:3000`
- * - 프로덕션(`production`): `process.env.NEXT_PUBLIC_SITE_URL` 사용
- */
+/*LOCALE DETECTION - DEPRECATED
+ * =========================================
+ * 3) localeDetection 여부 (옵션)
+ *    true => Accept-Language 헤더 감지 사용
+ *    false => Accept-Language 무시
+ * ========================================= */
+// const localeDetection = true;
 
-// const baseURL = new URL(
-//   process.env.NODE_ENV === "development"
-//     ? "http://localhost:3000"
-//     : process.env.NEXT_PUBLIC_SITE_URL || "https://next-ccunion.vercel.app",
-// ).toString();
-
-// clog.info("[middleware] baseURL : ", baseURL);
-
-// ### MAIN FUNCTION START ###
+/* MIDDLEWARE FUNCTION
+ * =========================================
+ * MAIN MIDDLEWARE
+ * ========================================= */
 export default auth((req) => {
-  // 다국어 미들웨어를 실행한다. (intlMiddleware) -> locale 검사 rewrite 등 next-intl 내부 로직
+  // [Step A] next-intl 미들웨어 (rewrite/locale 설정 등) 먼저 실행
   const response = intlMiddleware(req);
+
+  // 미들웨어 내에서 Response 헤더/쿠키를 수정하고 싶다면
+  // response.headers.set(...) / response.cookies.set(...) 가능.
+  // Vercel Edge 환경에서는 NextResponse API 사용.
+
   const { pathname } = req.nextUrl;
 
-  // -----------------------------
-  // 2) prefix / locale 식별 로직
-  // -----------------------------
-  // - /en/about => 첫 segment = "en" -> locale = "en"
-  // - /vn/about => 첫 segment = "vn" -> locale = "vn"
-  // - /about    => 첫 segment = "about" (prefix가 아님) -> locale = "ko" (기본)
-  // - /         => segment = ""        -> locale = "ko"
-  const segments = pathname.split("/").filter(Boolean);
-  const maybePrefix = segments[0] ?? "";
+  clog.log("[middleware - Step A] pathname: ", pathname);
 
-  const localeFromPath = pathname.split("/")[1];
+  /* URL PREFIX
+   * =========================================
+   * [Step B] URL prefix 추출
+   * ========================================= */
+  const segments = pathname.split("/").filter(Boolean); // 예: "/en/about" => [ "", "en", "about" ]
+  const prefix = segments[0] ?? "";
 
-  // ko-KR 에는 prefix가 없으니, /about 같은 경우 localeFromPath는 "about" 이다.
-  // en-US -> /en/about 일 때 localeFromPath = "en"
-  // vi-VN -> /vn/about 일 때 localeFromPath = "vn"
-  // 따라서 "ko" 는 없으므로 "/ko" 경로는 잘못된 것으로 판단하게 된다.
-  // 들어온 경로 중 "ko"를 제외하도록 validLocales 를 만든다.
-  const validLocalesExDefault = locales.filter((locale) => locale !== "ko");
+  clog.info("[middleware - Step B] segments: ", segments);
+  clog.info("[middleware - Step B] prefix: ", prefix);
 
-  const hasLocalePrefix = validLocalesExDefault.includes(maybePrefix);
-  const currentLocale = hasLocalePrefix ? maybePrefix : "ko";
+  let currentLocale: string = defaultLocale;
+  let routeSegments = segments;
 
-  // hasLocalePrefix === true 이면, 경로는 segments.slice(1)
-  // 없으면 segments 전체가 실제 라우트
-  const routeSegments = hasLocalePrefix ? segments.slice(1) : segments;
+  // prefix가 pathLocales 중 하나라면 => currentLocale = prefix
+  if (pathLocales.includes(prefix)) {
+    currentLocale = prefix;     // 예: prefix = "en" => currentLocale = "en"
+    routeSegments = segments.slice(1); // 예: [ "en", "about" ] => [ "about" ]
+  }
+
+  // 최종 실제 라우트 경로
+  // "/en/about" -> routePath = "/about",  "/about" -> routePath = "/about"
   const routePath = "/" + routeSegments.join("/");
 
-  clog.info("[middleware] prefix: ", hasLocalePrefix ? maybePrefix : "(none)");
-  clog.info("[middleware] currentLocale: ", currentLocale);
-  clog.info("[middleware] routePath: ", routePath);
+  /*COOKIE CHECK (NEXT_LOCALE)
+   * =========================================
+   * [Step C] 쿠키 확인 (NEXT_LOCALE)
+   * =========================================
+        if (!pathLocales.includes(prefix)) {
+          // prefix 값이 있다? -> URL 우선 적용 -> 무시
+          const userLocale = req.cookies.get("NEXT_LOCALE")?.value;
+          if (userLocale && locales.includes(userLocale)) {
+            currentLocale = userLocale;
 
-  // 유효성을 검증한다.
-  const isValidLocale =
-    // prefix 없이 바로 "/" 또는 "/login" 등으로 들어오면 기본(ko-KR)
-    localeFromPath === "" ||
-    // 위 두 개 중 하나라면 en-US 또는 vi-VN 이 된다.
-    validLocalesExDefault.includes(localeFromPath);
+            clog.info("[middleware - Step C] currentLocale: ", currentLocale);
+          }
+        }
+  * ========================================= */
 
-  // "/en" 또는 "/vn" 또는 "/" 인 경우를 루트 경로로 간주한다.
-  const isRootPath = pathname === "/" || validLocalesExDefault.some((l) => pathname === `/${l}`);
+  /* CURRENT LOCALE
+   * =========================================
+   * [Step E] 결국 currentLocale이 ko|en|vn 중 하나로 결정
+   * 만약 ko|en|vn이 아니면 => 404
+   * ========================================= */
+  if (!locales.includes(currentLocale)) {
+    clog.warn("[middleware - Step E] Invalid locale:", currentLocale);
+    return;
+  }
 
-  // publicPages에 들어 있는 각각의 라우트와 정규식 매칭
-  // "/" -> /en, /vn도 루트로 간주하도록 특별 처리
-  const isPublicPage = publicPages.some((route) => {
-    // 만약 route === "/"라면, "/en" 혹은 "/vn"도 허용
-    const regex = new RegExp(`^${route}$`);
+  /* PUBLIC/PROTECTED PAGE CHECK
+   * =========================================
+   * [Step F] 공개/비공개 경로 체크
+   * ========================================= */
+  const isPublicPage = publicPages.some((pattern) => {
+    const regex = new RegExp(`^${pattern}$`);
     return regex.test(routePath);
   });
 
-  // 보호된 경로인지 체크 -> 로그인 여부 검사
-  const isProtectedRoute = protectedRoutes.some((route) => routePath.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some((p) => routePath.startsWith(p));
 
-  clog.info("[middleware] isPublicPage: ", isPublicPage);
-  clog.info("[middleware] localeFromPath: ", localeFromPath);
-  clog.info("[middleware] isValidLocale: ", isValidLocale);
-  clog.info("[middleware] isRootPath: ", isRootPath);
-  clog.info("[middleware] isProtectedPath: ", isProtectedRoute);
+  clog.info("[middleware - G] routePath:", routePath);
+  clog.info("[middleware - G] currentLocale:", currentLocale);
+  clog.info("[middleware - G] isPublicPage:", isPublicPage);
+  clog.info("[middleware - G] isProtectedRoute:", isProtectedRoute);
+  clog.info("[middleware - G] auth:", req.auth ? "logged-in" : "no-auth");
 
-  if (isProtectedRoute) {
-    if (!req.auth) {
-      clog.warn("[middleware] Unauthenticated -> Redirect to /login");
-      const loginUrl = new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.nextUrl.origin);
-      return NextResponse.redirect(loginUrl);
-    }
+  /* LOGIN REDIRECT
+   * =========================================
+   * [Step G] 보호 페이지인데 인증 없음 => 로그인 리다이렉트
+   * ========================================= */
+  if (isProtectedRoute && !req.auth) {
+    clog.warn("[middleware - Step H] Not authenticated -> Redirect to /login");
+    const loginUrl = new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.nextUrl.origin);
+    return NextResponse.redirect(loginUrl);
   }
 
-  if (!["ko", "en", "vn"].includes(currentLocale)) {
-    clog.warn("[middleware] Invalid locale:", currentLocale);
-    return; // => 404
-  }
+  /*SAVE COOKIE
+   * =========================================
+   * [Step H] 쿠키가 없거나 invalid 했다면, defaultLocale가 확정된 시점에
+   * NEXT_LOCALE 쿠키를 저장 (선택 사항)
+   * ====================================================
+  // 만약 currentLocale === defaultLocale이고, 쿠키가 전혀 없는 상황이라면 => 한 번 저장해두자
+  const userLocaleInCookie = req.cookies.get("NEXT_LOCALE")?.value;
+  if (!userLocaleInCookie) {
+        // response는 next-intl 미들웨어가 생성한 Response
+        // NextResponse 쿠키 API 사용
+        response.cookies.set("NEXT_LOCALE", currentLocale, {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365, // 1년
+          secure: true, // HTTPS에서만 전송 (Vercel 대부분 HTTPS)
+          sameSite: "lax",
+        });
+      }
+  * ========================================= */
 
-  if (isPublicPage) {
-    return response;
-  } else {
-    // public도 아니고 protected도 아닌(=404) 페이지면
-    // Next.js가 라우트를 찾지 못하면 자동 404
-    // 혹은 여기가 catch-all 로직이 되려면 return response; 로 통과
-    // 필요에 따라 정리:
-    return response;
-  }
+  /* =========================================
+   * [Step I] 공개 페이지라면 그냥 통과
+   * 나머지도 통과 (404는 Next.js가 처리)
+   * ========================================= */
+  return response;
 });
 
+/* =========================================
+ * next.js 미들웨어 설정
+ * ========================================= */
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

@@ -15,7 +15,7 @@ export const settingsData = {
         name: "CC UNION",
         description: "Chung Cheong Business Association in Vietnam (CCBA)",
         keywords: "HCM, Chung Cheong, Business, Association, CCBA, Korea, Vietnam",
-        url: "next-ccunion.vercel.app",
+        url: "https://next-ccunion.vercel.app",
         logo: "/icons/logo.svg",
         slogan: "Business Association in Vietnam",
         author: "MINIU",
