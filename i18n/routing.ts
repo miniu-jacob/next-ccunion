@@ -15,7 +15,6 @@ export const routing = defineRouting({
       "vi-VN": "/vn",
     },
   },
-  localeDetection: false,
   pathnames: {}, // 경로 이름을 지정하지 않음
 });
 

@@ -84,7 +84,7 @@ export default auth((req) => {
 
   // prefix가 pathLocales 중 하나라면 => currentLocale = prefix
   if (pathLocales.includes(prefix)) {
-    currentLocale = prefix;     // 예: prefix = "en" => currentLocale = "en"
+    currentLocale = prefix; // 예: prefix = "en" => currentLocale = "en"
     routeSegments = segments.slice(1); // 예: [ "en", "about" ] => [ "about" ]
   }
 
@@ -95,17 +95,16 @@ export default auth((req) => {
   /*COOKIE CHECK (NEXT_LOCALE)
    * =========================================
    * [Step C] 쿠키 확인 (NEXT_LOCALE)
-   * =========================================
-        if (!pathLocales.includes(prefix)) {
-          // prefix 값이 있다? -> URL 우선 적용 -> 무시
-          const userLocale = req.cookies.get("NEXT_LOCALE")?.value;
-          if (userLocale && locales.includes(userLocale)) {
-            currentLocale = userLocale;
+   * ========================================= */
+  if (!pathLocales.includes(prefix)) {
+    // prefix 값이 있다? -> URL 우선 적용 -> 무시
+    const userLocale = req.cookies.get("NEXT_LOCALE")?.value;
+    if (userLocale && locales.includes(userLocale)) {
+      currentLocale = userLocale;
 
-            clog.info("[middleware - Step C] currentLocale: ", currentLocale);
-          }
-        }
-  * ========================================= */
+      clog.info("[middleware - Step C] currentLocale: ", currentLocale);
+    }
+  }
 
   /* CURRENT LOCALE
    * =========================================
