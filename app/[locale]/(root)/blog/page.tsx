@@ -28,16 +28,9 @@ export const metadata: Metadata = {
 console.log("[DEBUG] Current working directory: ", process.cwd());
 console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let fileList: any[];
-
-try {
-  fileList = fs.readdirSync("contents", "utf-8");
-  console.log("[DEBUG] File successfully read: ", fileList);
-} catch (error) {
-  console.error("[DEBUG]] Error reading contents directory : ", error);
-  fileList = [];
-}
+// 파일 목록이 없는 경우 빈 배열을 반환하도록 수정 || [];
+const fileList = fs.readdirSync("contents", "utf-8") || [];
+console.log("[DEBUG] File successfully read: ", fileList);
 
 const blogs: Blog[] = fileList.map((file) => {
   const fileContent = readFileSync(`contents/${file}`, "utf-8");
