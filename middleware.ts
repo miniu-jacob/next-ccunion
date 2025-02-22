@@ -15,24 +15,15 @@ import { NextResponse } from "next/server";
     // PROTECTED ROUTES (LOGIN REQUIRED)
     + const protectedRoutes: string[] = ["/dashboard", "/profile", "/admin"];
  * ========================================= */
-/* PUBLIC ROUTE (NO LOGIN REQUIRED)
- * =========================================
- * 0) 공개/비공개 경로 정의
- * ========================================= */
-const publicRoutes: string[] = [
-  "/",
-  "/login",
-  "/register",
-  "/about",
-  "/blog",
-  "/contact",
-  "/search",
-  "/blogpost/(.*)",
-  "/page/(.*)",
-];
 
-// PROTECTED ROUTES (LOGIN REQUIRED)
-const protectedRoutes: string[] = ["/dashboard", "/profile", "/admin"];
+/*PUBLIC ROUTE (NO LOGIN REQUIRED)
+ * =========================================
+* 0) 공개/비공개 경로 정의
+  + const publicRoutes: string[] = [ "/", "/login", "/register", "/about", "/blog",
+      "/contact", "/search", "/blogpost/(.*)", "/page/(.*)" ];
+  // PROTECTED ROUTES (LOGIN REQUIRED)
+  + const protectedRoutes: string[] = ["/dashboard", "/profile", "/admin"];
+* ========================================= */
 
 /* 다국어 미들웨어 생성(routing 객체 전달, createMiddleware 함수 사용)
  * =========================================
@@ -94,18 +85,18 @@ export default auth((req) => {
    *   - isPublicRoute: 요청된 경로가 공개 경로인지 확인
    * ============================= */
   const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
-  // const isPublicRoute = publicPaths.has(pathWithoutPrefix);
-  // const isProtectedRoute = protectedPaths.has(pathWithoutPrefix);
-  const isPublicRoute = publicRoutes.some((route) =>
-    route.includes(".*")
-      ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
-      : route === pathWithoutPrefix,
-  );
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    route.includes(".*")
-      ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
-      : route === pathWithoutPrefix,
-  );
+  const isPublicRoute = publicPaths.has(pathWithoutPrefix);
+  const isProtectedRoute = protectedPaths.has(pathWithoutPrefix);
+  // const isPublicRoute = publicRoutes.some((route) =>
+  //   route.includes(".*")
+  //     ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
+  //     : route === pathWithoutPrefix,
+  // );
+  // const isProtectedRoute = protectedRoutes.some((route) =>
+  //   route.includes(".*")
+  //     ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
+  //     : route === pathWithoutPrefix,
+  // );
 
   // 공개 경로 처리
   if (isPublicRoute) {
