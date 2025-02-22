@@ -2,9 +2,9 @@
 
 export const i18n = {
   locales: [
-    { code: "ko-KR", name: "한국어", slug: "ko", icon: "/icons/flags/ko.svg" },
-    { code: "en-US", name: "English", slug: "en", icon: "/icons/flags/us.svg" },
-    { code: "vi-VN", name: "Tiếng Việt", slug: "vn", icon: "/icons/flags/vn.svg" },
+    { slug: "ko", name: "한국어", code: "ko-KR", icon: "/icons/flags/ko.svg" },
+    { slug: "en", name: "English", code: "en-US", icon: "/icons/flags/us.svg" },
+    { slug: "vn", name: "Tiếng Việt", code: "vi-VN", icon: "/icons/flags/vn.svg" },
   ],
   defaultLocale: "ko",
 };

@@ -10,7 +10,11 @@
     "Exchanges and Cooperation": "Exchanges and Cooperation",
     "Friendship": "Friendship Promotion",
     "Guide Message": "The Chungcheong Entrepreneurs Association always welcomes your participation."
-},
+  },
+  "About": {
+    "Introduction": "Introduction",
+    "Guide Message": "The Chungcheong Entrepreneurs Association always welcomes your participation."
+  },
   "Search": {
     "Search": "Search"
   },

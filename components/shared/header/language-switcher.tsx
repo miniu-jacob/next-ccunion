@@ -27,6 +27,12 @@ function setLocaleCookie(locale: string) {
   document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${maxAge}; Secure; SameSite=Lax`;
 }
 
+export function cleanPathname(pathname: string, locale: string) {
+  const localePrefix = `/${locale}`;
+
+  return pathname.startsWith(localePrefix) ? pathname.replace(localePrefix, "") || "/" : pathname;
+}
+
 export default function LanguageSwitcher() {
   const { locales } = i18n;
   const locale = useLocale();
@@ -49,7 +55,8 @@ export default function LanguageSwitcher() {
         <DropdownMenuLabel>Language</DropdownMenuLabel>
         <DropdownMenuRadioGroup value={locale}>
           {locales.map((c) => (
-            <DropdownMenuRadioItem key={c.name} value={c.code}>
+            // 현재 언어는 선택 불가능하게
+            <DropdownMenuRadioItem key={c.name} value={c.code} disabled={c.slug === locale}>
               {/* <div className="w-full flex items-center gap-2 text-sm">
                <Image src={c.icon} alt={c.name} width={28} height={28} />
                {c.name}
