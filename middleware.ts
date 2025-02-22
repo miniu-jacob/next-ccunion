@@ -3,6 +3,8 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
+import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
+import { NextResponse } from "next/server";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -67,10 +69,31 @@ export default auth((req) => {
     currentLocale,
   );
 
-  /* next-intl 미들웨어를 실행
+  /* PATH CHECK
    * =============================
-   * [Step C] next-intl 미들웨어 실행
+   * [Step C] 공개/비공개 경로 확인
+   *   - pathWithoutPrefix: prefix를 제거한 경로
+   *   - isPublicRoute: 요청된 경로가 공개 경로인지 확인
    * ============================= */
+  const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
+  const isPublicRoute = publicPaths.has(pathWithoutPrefix);
+  const isProtectedRoute = protectedPaths.has(pathWithoutPrefix);
+
+  // 공개 경로 처리
+  if (isPublicRoute) {
+    return intlMiddleware(req);
+  }
+
+  // 비공개 경로 처리
+  if (isProtectedRoute) {
+    if (!req.auth) {
+      const loginUrl = new URL(`/login?callbackUrl=${encodeURIComponent(pathname)}`, req.nextUrl.origin);
+
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 모든 경로에 대해 intlMiddleware 실행(잘못된 경로는 외부처리)
   const response = intlMiddleware(req);
 
   /* COOKIE SETTINGS
