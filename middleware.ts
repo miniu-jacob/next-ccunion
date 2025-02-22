@@ -5,7 +5,6 @@ import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
-import { clog } from "./lib/jlogger";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -105,9 +104,9 @@ export default auth((req) => {
   //     : route === pathWithoutPrefix,
   // );
 
-  clog.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
-  clog.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
-  clog.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
+  console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
+  console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
+  console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
   // 공개 경로 처리
   if (isPublicRoute) {
