@@ -2,12 +2,12 @@
 
 import React from "react";
 import Image from "next/image";
-// import Link from "next/link";
+import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import fs, { readFileSync } from "fs";
 import matter from "gray-matter";
 import { Metadata } from "next";
-import { Link } from "@/i18n/routing";
+// import { Link } from "@/i18n/routing";
 
 export interface Blog {
   slug: string;

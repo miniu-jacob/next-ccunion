@@ -1,19 +1,18 @@
 // i18n/routing.ts
 
 import { i18n } from "@/i18n-config";
-import { routesData } from "@/lib/db/data/routes-data";
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
 // routesData 에서 모든 경로 추출
-const allPaths = [
-  ...routesData.public.static,
-  ...routesData.public.dynamic,
-  ...routesData.protected.static,
-  ...routesData.protected.dynamic,
-];
+// const allPaths = [
+//   ...routesData.public.static,
+//   ...routesData.public.dynamic,
+//   ...routesData.protected.static,
+//   ...routesData.protected.dynamic,
+// ];
 
-const pathnames = Object.fromEntries(allPaths.map((path) => [path, path]));
+// const pathnames = Object.fromEntries(allPaths.map((path) => [path, path]));
 
 /* ROUTING CONFIGURATION
  * =============================
@@ -28,7 +27,7 @@ export const routing = defineRouting({
   locales: i18n.locales.map((locale) => locale.slug),
   defaultLocale: i18n.defaultLocale,
   localePrefix: { mode: "as-needed" },
-  pathnames,
+  pathnames: {},
 });
 
 export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
