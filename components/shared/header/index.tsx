@@ -1,12 +1,13 @@
 // components/shared/header/index.tsx
 
-import Link from "next/link";
+// import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggleButton } from "./theme-toggle-button";
 import { SideSheet } from "./side-sheet";
 import data from "@/lib/db/data/data";
 import { useLocale } from "next-intl";
 import LanguageSwitcher from "./language-switcher";
+import { Link } from "@/i18n/routing";
 
 export default function Header() {
   const locale = useLocale();

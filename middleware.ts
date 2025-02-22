@@ -3,7 +3,6 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
-import { clog } from "./lib/jlogger";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -14,21 +13,6 @@ import { clog } from "./lib/jlogger";
     // PROTECTED ROUTES (LOGIN REQUIRED)
     + const protectedRoutes: string[] = ["/dashboard", "/profile", "/admin"];
  * ========================================= */
-
-/*i18n LOCALE PREFIX
- * =========================================
- * [Pre A-2] i18n locale 목록 및 prefix 관리
-    + const locales = i18n.locales.map((locale) => locale.slug); // 전체 [ "ko", "en", "vn" ]
-    + const defaultLocale = i18n.defaultLocale; // 예: "ko"
- * ========================================= */
-
-/*LOCALE DETECTION - DEPRECATED
- * =========================================
- * [Pre A-3] 브라우저 언어 감지 - localeDetection 여부 (옵션)
- *    true -> Accept-Language 헤더 감지 사용
- *    false -> Accept-Language 무시
- * ========================================= */
-// const localeDetection = true;
 
 /* 다국어 미들웨어 생성(routing 객체 전달, createMiddleware 함수 사용)
  * =========================================
@@ -59,8 +43,8 @@ export default auth((req) => {
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
   const prefix = pathnameParts[0] || "";
 
-  clog.log("[middleware - Step A] pathname comes: ", pathname);
-  clog.info("[middleware - Step A] prefix extracted: ", pathnameParts);
+  console.log("[middleware - Step A] pathname comes: ", pathname);
+  console.log("[middleware - Step A] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -73,7 +57,7 @@ export default auth((req) => {
   const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
   const currentLocale = urlLocale || userLocale;
 
-  clog.log(
+  console.log(
     "[middleware - Step B]: ",
     "[urlLocale]: ",
     urlLocale,
@@ -102,7 +86,7 @@ export default auth((req) => {
       maxAge: 60 * 60 * 24 * 30, // 30 days
       secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
     });
-    clog.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
+    console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
   }
 
   return response;
