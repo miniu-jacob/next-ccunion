@@ -5,6 +5,7 @@ import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
+import { clog } from "./lib/jlogger";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -45,6 +46,12 @@ export default auth((req) => {
   const locales = routing.locales;
   const defaultLocale = routing.defaultLocale;
 
+  // 로그 : Accept-Language 헤더 확인
+  const acceptLanguage = req.headers.get("accept-language");
+
+  console.log("==============================================");
+  console.log("[middleware - Step A] Accept-Language: ", acceptLanguage);
+
   /* URL PREFIX 추출
    * =============================
    * [Step A] URL에서 prefix 를 추출한다.
@@ -54,8 +61,8 @@ export default auth((req) => {
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
   const prefix = pathnameParts[0] || "";
 
-  console.log("[middleware - Step A] pathname comes: ", pathname);
-  console.log("[middleware - Step A] prefix extracted: ", pathnameParts);
+  console.log("[middleware - Step B] pathname comes: ", pathname);
+  console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -69,7 +76,7 @@ export default auth((req) => {
   const currentLocale = urlLocale || userLocale;
 
   console.log(
-    "[middleware - Step B]: ",
+    "[middleware - Step C]: ",
     "[urlLocale]: ",
     urlLocale,
     "[userLocale]: ",
@@ -97,6 +104,10 @@ export default auth((req) => {
   //     ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
   //     : route === pathWithoutPrefix,
   // );
+
+  clog.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
+  clog.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
+  clog.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
   // 공개 경로 처리
   if (isPublicRoute) {
@@ -130,6 +141,8 @@ export default auth((req) => {
     });
     console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
   }
+
+  console.log("[middleware - Final] Response locale: ", currentLocale);
 
   return response;
 });

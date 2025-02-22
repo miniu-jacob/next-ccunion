@@ -7,7 +7,6 @@ import { buttonVariants } from "@/components/ui/button";
 import fs, { readFileSync } from "fs";
 import matter from "gray-matter";
 import { Metadata } from "next";
-import path from "path";
 // import { Link } from "@/i18n/routing";
 
 export interface Blog {
@@ -25,12 +24,12 @@ export const metadata: Metadata = {
 };
 
 // 현재 작업 디렉토리와 contents 경로 확인
-console.log("[DEBUG] Current working directory: ", process.cwd());
-console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
+// console.log("[DEBUG] Current working directory: ", process.cwd());
+// console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
 
 // 파일 목록이 없는 경우 빈 배열을 반환하도록 수정 || [];
 const fileList = fs.readdirSync("contents", "utf-8") || [];
-console.log("[DEBUG] File successfully read: ", fileList);
+// console.log("[DEBUG] File successfully read: ", fileList);
 
 const blogs: Blog[] = fileList.map((file) => {
   const fileContent = readFileSync(`contents/${file}`, "utf-8");
@@ -48,8 +47,8 @@ const blogs: Blog[] = fileList.map((file) => {
 // clog.info("[blogsContents]", blogs);
 
 const BlogList = () => {
-  console.log("[blogs]", blogs);
-  console.log("[fileList]", fileList);
+  // console.log("[blogs]", blogs);
+  // console.log("[fileList]", fileList);
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center my-2">Our Blogs</h1>
