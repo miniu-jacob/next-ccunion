@@ -72,6 +72,14 @@ export default auth((req) => {
 
   clog.info("[middleware - Step B] currentLocale: ", currentLocale);
 
+  // 경로 조정 (클라이언트 요청과 언어 동기화)
+  const pathWithoutPrefix = locales.includes(prefix) ? pathname.replace(`/${prefix}`, "") : pathname;
+  if (prefix !== currentLocale && (prefix || currentLocale !== defaultLocale)) {
+    const correctedPath = currentLocale === defaultLocale ? pathWithoutPrefix : `/${currentLocale}${pathWithoutPrefix}`;
+    clog.info("[middleware - Step B] redirecting to correct locale: ", correctedPath);
+    return NextResponse.redirect(new URL(correctedPath, req.nextUrl));
+  }
+
   /* next-intl 미들웨어를 실행
    * =============================
    * [Step C] next-intl 미들웨어 실행
