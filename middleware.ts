@@ -4,7 +4,6 @@ import { routing } from "./i18n/routing";
 import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 import { clog } from "./lib/jlogger";
-import { NextResponse } from "next/server";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -48,43 +47,46 @@ export default auth((req) => {
   // [Step A] next-intl 미들웨어 (rewrite/locale 설정 등) 먼저 실행
   const { pathname } = req.nextUrl;
 
+  const locales = routing.locales;
+  const defaultLocale = routing.defaultLocale;
+
   /* URL PREFIX 추출
    * =============================
    * [Step A] URL에서 prefix 를 추출한다.
    *   - locales: 언어 목록
    *   - defaultLocale: 기본 언어
    *  ============================= */
-  const locales = routing.locales;
-  const defaultLocale = routing.defaultLocale;
+  const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
+  const prefix = pathnameParts[0] || "";
 
-  // 1). URL prefix 추출 및 로깅
-  const prefix = pathname.split("/")[1] || "";
-
-  clog.info("[middleware - Step A] pathname comes: ", pathname);
-  clog.info("[middleware - Step A] prefix extracted: ", prefix);
+  clog.log("[middleware - Step A] pathname comes: ", pathname);
+  clog.info("[middleware - Step A] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
-   * [Step B] 언어 설정
+   * [Step B] 현재 URL 에서 locale을 감지한다.
+   *   - urlLocale : URL에서 추출한 언어(prefix)
+   *   - userLocale: 쿠키에서 추출한 언어
    *   - currentLocale: URL에서 추출한 언어(prefix) -> 쿠키 -> 기본 언어 순서
    *  ============================= */
-  const currentLocale = locales.includes(prefix) ? prefix : req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
+  const urlLocale = locales.includes(prefix) ? prefix : null;
+  const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
+  const currentLocale = urlLocale || userLocale;
 
-  clog.info("[middleware - Step B] currentLocale: ", currentLocale);
-
-  // 경로 조정 (클라이언트 요청과 언어 동기화)
-  const pathWithoutPrefix = locales.includes(prefix) ? pathname.replace(`/${prefix}`, "") : pathname;
-  if (prefix !== currentLocale && (prefix || currentLocale !== defaultLocale)) {
-    const correctedPath = currentLocale === defaultLocale ? pathWithoutPrefix : `/${currentLocale}${pathWithoutPrefix}`;
-    clog.info("[middleware - Step B] redirecting to correct locale: ", correctedPath);
-    return NextResponse.redirect(new URL(correctedPath, req.nextUrl));
-  }
+  clog.log(
+    "[middleware - Step B]: ",
+    "[urlLocale]: ",
+    urlLocale,
+    "[userLocale]: ",
+    userLocale,
+    "[currentLocale]: ",
+    currentLocale,
+  );
 
   /* next-intl 미들웨어를 실행
    * =============================
    * [Step C] next-intl 미들웨어 실행
-   *   - currentLocale: URL에서 추출한 언어(prefix) -> 쿠키 -> 기본 언어 순서
-   *  ============================= */
+   * ============================= */
   const response = intlMiddleware(req);
 
   /* COOKIE SETTINGS
@@ -97,7 +99,7 @@ export default auth((req) => {
   if (!req.cookies.get("NEXT_LOCALE") || req.cookies.get("NEXT_LOCALE")?.value !== currentLocale) {
     response.cookies.set("NEXT_LOCALE", currentLocale, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 365, // 30 days
+      maxAge: 60 * 60 * 24 * 30, // 30 days
       secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
     });
     clog.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
