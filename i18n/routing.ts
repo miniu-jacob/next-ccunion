@@ -26,6 +26,8 @@ import { defineRouting } from "next-intl/routing";
 export const routing = defineRouting({
   locales: i18n.locales.map((locale) => locale.slug),
   defaultLocale: i18n.defaultLocale,
+  localeDetection: true,
+  localeCookie: { name: "NEXT_LOCALE" },
   localePrefix: { mode: "always" },
   pathnames: {},
 });
