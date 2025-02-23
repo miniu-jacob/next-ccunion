@@ -61,8 +61,8 @@ export default auth((req) => {
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
   const prefix = pathnameParts[0] || "";
 
-  // console.log("[middleware - Step B] pathname comes: ", pathname);
-  // console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  console.log("[middleware - Step B] pathname comes: ", pathname);
+  console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -75,15 +75,22 @@ export default auth((req) => {
   const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
   const currentLocale = userLocale || urlLocale || defaultLocale;
 
-  // console.log(
-  //   "[middleware - Step C]: ",
-  //   "[urlLocale]: ",
-  //   urlLocale,
-  //   "[userLocale]: ",
-  //   userLocale,
-  //   "[currentLocale]: ",
-  //   currentLocale,
-  // );
+  // Step 4: "/" 경로 접속 시 쿠키 기반으로 locale 적용
+  if (currentLocale !== urlLocale) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${userLocale}${req.nextUrl.pathname}`;
+    return NextResponse.redirect(url);
+  }
+
+  console.log(
+    "[middleware - Step C]: ",
+    "[urlLocale]: ",
+    urlLocale,
+    "[userLocale]: ",
+    userLocale,
+    "[currentLocale]: ",
+    currentLocale,
+  );
 
   /* PATH CHECK
    * =============================
@@ -94,9 +101,9 @@ export default auth((req) => {
   const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
   const isPublicRoute = isMatch(pathWithoutPrefix, publicPaths);
   const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths);
-  // console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
-  // console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
-  // console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
+  console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
+  console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
+  console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
   // 공개 경로 처리
   if (isPublicRoute) {
