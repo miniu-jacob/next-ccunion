@@ -25,7 +25,7 @@ import { defineRouting } from "next-intl/routing";
 export const routing = defineRouting({
   locales: ["ko", "en", "vn"],
   defaultLocale: "ko",
-  localeDetection: false,
+  // localeDetection: false,
   // localeCookie: { name: "NEXT_LOCALE" },
   localePrefix: {
     mode: "always",
