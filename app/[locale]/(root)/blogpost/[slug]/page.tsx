@@ -18,6 +18,7 @@ import fs from "fs";
 import matter from "gray-matter";
 import TableOfContentPage from "@/components/shared/contents/table-of-content";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
+import path from "path";
 
 // URL: https://ondrejsevcik.com/blog/building-perfect-markdown-processor-for-my-blog
 
@@ -43,10 +44,16 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     } as Options)
     .use(rehypeAutolinkHeadings);
 
-  const filePath = `contents/${slug}.md`;
+  const contentsDir = path.join(process.cwd(), "contents");
+  const filePath = `${contentsDir}/${slug}.md`;
+  let fileContent: string = "";
 
+  try {
+    fileContent = fs.readFileSync(filePath, "utf-8");
+  } catch (error) {
+    console.error(`[ERROR] Failed to load blog post: ${slug} : , ${error}`);
+  }
   // Read File
-  const fileContent = fs.readFileSync(filePath, "utf-8");
 
   // gray-matter 를 사용하여 포맷된 데이터를 추출.
   const { data, content } = matter(fileContent);

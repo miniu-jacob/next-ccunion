@@ -67,3 +67,24 @@ export function isMatch(path: string, routeSet: Set<string>): boolean {
     return routeToRegex(route).test(path);
   });
 }
+
+/**
+ * "/blogpost/[slug]"
+ *   -> 정규식 ^/blogpost/(?<slug>[^/]+)$
+ * "/profile/[id]/settings"
+ *   -> 정규식 ^/profile/(?<id>[^/]+)/settings$
+ *
+ * 이렇게 그룹 이름으로 추출 가능( match.groups.slug 등 )
+ */
+export function routeToNamedRegex(route: string): RegExp {
+  // 정규식 특수문자 이스케이프
+  const escaped = route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // 2). [id], [slug] 같은 부분을 (?<id>[^/]+), (?<slug>[^/]+) 형태로 변환
+  const named = escaped.replace(/\\\[([^/]+?)\\]/g, (_, groupName) => {
+    return `(?<${groupName}>[^/]+)`;
+  });
+
+  // 3). ^...$ 로 감싸서 전체 매칭
+  return new RegExp(`^${named}$`);
+}
