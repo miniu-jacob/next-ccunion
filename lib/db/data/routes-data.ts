@@ -3,7 +3,7 @@
 export const routesData = {
   // 공개 경로
   public: {
-    static: ["/", "/blog", "/search", "/login", "/register", "/about"],
+    static: ["/", "/blog", "/search", "/login", "/register", "/about", "/contact"],
     dynamic: ["/blogpost/[slug]"],
   },
   protected: {
