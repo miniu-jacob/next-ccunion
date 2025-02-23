@@ -5,7 +5,7 @@ import React from "react";
 import { Inter as FontSans } from "next/font/google";
 import "../globals.css";
 import { getSetting } from "@/lib/actions/setting.actions";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import ClientProviders from "@/components/shared/client-providers";
 import { NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
@@ -38,6 +38,10 @@ export async function generateMetadata() {
   };
 }
 
+export async function generateStaticParams() {
+  return [{ locale: "ko" }, { locale: "en" }, { locale: "vn" }];
+}
+
 export default async function LocaleLayout({
   params,
   children,
@@ -54,6 +58,9 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
+
+  // 정적 랜더링을 위한 locale 설정
+  setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
 

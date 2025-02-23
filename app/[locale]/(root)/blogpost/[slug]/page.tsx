@@ -26,6 +26,23 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+// 정적 페이지 생성
+export async function generateStaticParams() {
+  const contentDir = path.join(process.cwd(), "contents");
+  let fileList: string[]; // 파일 리스트
+  try {
+    fileList = fs.readdirSync(contentDir, "utf-8");
+    console.log("[DEBUG] getStaticProps - File successfully read: ", fileList);
+  } catch (error) {
+    console.error("[ERROR] getStaticProps - Failed to read directory: ", error);
+    fileList = [];
+  }
+
+  return fileList.map((file) => ({
+    slug: file.replace(".md", ""),
+  }));
+}
+
 const BlogPostPage = async ({ params }: BlogPostPageProps) => {
   const { slug } = await params;
   const result = unified()

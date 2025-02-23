@@ -9,7 +9,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   // clog.log("[getRequestConfig] locales: ", locale);
 
-  if (!locale || !routing.locales.includes(locale)) {
+  if (!locale || !routing.locales.includes(locale as "en" | "ko" | "vn")) {
     locale = routing.defaultLocale;
   }
 

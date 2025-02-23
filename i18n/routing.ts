@@ -1,6 +1,5 @@
 // i18n/routing.ts
 
-import { i18n } from "@/i18n-config";
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
@@ -24,10 +23,10 @@ import { defineRouting } from "next-intl/routing";
  *   - pathnames: URL 경로가 다른 경우 필요
  * ============================= */
 export const routing = defineRouting({
-  locales: i18n.locales.map((locale) => locale.slug),
-  defaultLocale: i18n.defaultLocale,
+  locales: ["ko", "en", "vn"],
+  defaultLocale: "ko",
   localeDetection: false,
-  localeCookie: { name: "NEXT_LOCALE" },
+  // localeCookie: { name: "NEXT_LOCALE" },
   localePrefix: {
     mode: "always",
     prefixes: {
