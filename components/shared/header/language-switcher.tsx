@@ -37,7 +37,6 @@ export default function LanguageSwitcher() {
   const { locales } = i18n;
   const locale = useLocale();
   const pathname = usePathname();
-  console.log("[DEBUG] LanguageSwitcher - pathname: ", pathname);
 
   return (
     <DropdownMenu>

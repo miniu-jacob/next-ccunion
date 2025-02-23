@@ -6,6 +6,7 @@ import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
 import { isMatch } from "./lib/utils";
+import { NextURL } from "next/dist/server/web/next-url";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -100,7 +101,14 @@ export default auth((req) => {
 
   // 공개 경로 처리
   if (isPublicRoute) {
-    return intlMiddleware(req);
+    const url = req.nextUrl.clone();
+    url.pathname = currentLocale === defaultLocale ? pathWithoutPrefix : `/${currentLocale}${pathWithoutPrefix}`;
+    return intlMiddleware(
+      Object.defineProperty(req, "nextUrl", {
+        value: url,
+        writable: true,
+      }),
+    );
   }
 
   // 비공개 경로 처리

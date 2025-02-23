@@ -1,7 +1,6 @@
 // i18n/routing.ts
 
 import { i18n } from "@/i18n-config";
-import { routesData } from "@/lib/db/data/routes-data";
 import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 
