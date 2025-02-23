@@ -43,7 +43,7 @@ export default function LanguageSwitcher() {
       <DropdownMenuTrigger className="header-button h-16">
         <div className="flex items-center gap-1 text-base">
           <Image
-            src={locales.find((l) => l.code === locale)?.icon || locales[0].icon}
+            src={locales.find((l) => l.slug === locale)?.icon || locales[0].icon}
             alt={"language"}
             width={28}
             height={28}

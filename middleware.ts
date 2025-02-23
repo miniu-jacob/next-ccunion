@@ -47,10 +47,10 @@ export default auth((req) => {
   const defaultLocale = routing.defaultLocale;
 
   // 로그 : Accept-Language 헤더 확인
-  const acceptLanguage = req.headers.get("accept-language");
+  // const acceptLanguage = req.headers.get("accept-language");
 
-  console.log("==============================================");
-  console.log("[middleware - Step A] Accept-Language: ", acceptLanguage);
+  // console.log("==============================================");
+  // console.log("[middleware - Step A] Accept-Language: ", acceptLanguage);
 
   /* URL PREFIX 추출
    * =============================
@@ -93,10 +93,10 @@ export default auth((req) => {
    * ============================= */
   const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
   const isPublicRoute = isMatch(pathWithoutPrefix, publicPaths);
-  const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths)
+  const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths);
   console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
   console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
-  console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
+  // console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
   // 공개 경로 처리
   if (isPublicRoute) {
