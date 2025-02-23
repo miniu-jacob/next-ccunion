@@ -45,13 +45,6 @@ export default auth((req) => {
 
   // const locales = routing.locales;
   const defaultLocale = routing.defaultLocale;
-
-  // 로그 : Accept-Language 헤더 확인
-  // const acceptLanguage = req.headers.get("accept-language");
-
-  // console.log("==============================================");
-  // console.log("[middleware - Step A] Accept-Language: ", acceptLanguage);
-
   /* URL PREFIX 추출
    * =============================
    * [Step A] URL에서 prefix 를 추출한다.
