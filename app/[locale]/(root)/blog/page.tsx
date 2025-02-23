@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import fs, { readFileSync } from "fs";
 import matter from "gray-matter";
 import { Metadata } from "next";
+import path from "path";
 // import path from "path";
 // import { Link } from "@/i18n/routing";
 
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 
 // 현재 작업 디렉토리와 contents 경로 확인
 console.log("[DEBUG] Current working directory: ", process.cwd());
-// console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
+console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
 
 let fileList: string[];
 try {
