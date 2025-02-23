@@ -29,11 +29,6 @@ export const routing = defineRouting({
   // localeCookie: { name: "NEXT_LOCALE" },
   localePrefix: {
     mode: "always",
-    prefixes: {
-      ko: "/ko",
-      en: "/en",
-      vn: "/vn",
-    },
   },
   pathnames: {},
 });
