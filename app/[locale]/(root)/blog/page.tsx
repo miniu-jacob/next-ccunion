@@ -28,7 +28,13 @@ export const metadata: Metadata = {
 // console.log("[DEBUG] Attempting to read directory: ", path.join(process.cwd(), "contents"));
 
 // 파일 목록이 없는 경우 빈 배열을 반환하도록 수정 || [];
-const fileList = fs.readdirSync("contents", "utf-8") || [];
+let fileList: string[];
+try {
+  fileList = fs.readdirSync("contents", "utf-8");
+} catch (error) {
+  console.error("[ERROR] Failed to read directory: ", error);
+  fileList = [];
+}
 // console.log("[DEBUG] File successfully read: ", fileList);
 
 const blogs: Blog[] = fileList.map((file) => {

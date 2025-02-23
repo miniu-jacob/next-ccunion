@@ -28,7 +28,6 @@ export const routing = defineRouting({
   locales: i18n.locales.map((locale) => locale.slug),
   defaultLocale: i18n.defaultLocale,
   localePrefix: { mode: "as-needed" },
-  // pathnames: {},
   pathnames,
 });
 

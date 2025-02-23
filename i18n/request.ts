@@ -2,9 +2,10 @@
 
 import { getRequestConfig } from "next-intl/server";
 import { routing } from "./routing";
+import { Locale } from "@/i18n-config";
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
+  let locale: string | undefined = await requestLocale;
 
   // clog.log("[getRequestConfig] locales: ", locale);
 
