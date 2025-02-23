@@ -5,6 +5,7 @@ import NextAuth from "next-auth";
 import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
+import { isMatch } from "./lib/utils";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -91,19 +92,8 @@ export default auth((req) => {
    *   - isPublicRoute: 요청된 경로가 공개 경로인지 확인
    * ============================= */
   const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
-  const isPublicRoute = publicPaths.has(pathWithoutPrefix);
-  const isProtectedRoute = protectedPaths.has(pathWithoutPrefix);
-  // const isPublicRoute = publicRoutes.some((route) =>
-  //   route.includes(".*")
-  //     ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
-  //     : route === pathWithoutPrefix,
-  // );
-  // const isProtectedRoute = protectedRoutes.some((route) =>
-  //   route.includes(".*")
-  //     ? new RegExp(`^${route.replace("/(.*)", ".*")}$`).test(pathWithoutPrefix)
-  //     : route === pathWithoutPrefix,
-  // );
-
+  const isPublicRoute = isMatch(pathWithoutPrefix, publicPaths);
+  const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths)
   console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
   console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
   console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);

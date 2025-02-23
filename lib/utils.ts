@@ -44,3 +44,26 @@ export const formatError = (error: any): string => {
     return typeof error.message === "string" ? error.message : JSON.stringify(error.message);
   }
 };
+
+/*
+ * 미들웨어에서 사용하는 공개/비공개 경로인지 비교할자자수 있도록 하는 유틸
+ * 경로 문자열("/blogpost/[slug]") 을 입력받아 정규식(RegExp) 객체로 변환한다.
+ *   - "/blogpost/[slug]" → 정규식 ^/blogpost/[^/]+$
+ *   - "/profile/[id]/settings" → 정규식 ^/profile/[^/]+/settings$
+ */
+export function routeToRegex(route: string): RegExp {
+  // 먼저 정규식 특수문자를 escape 처리한다. -> (/.?*+^$[] 등)
+  const escaped = route.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // [slug] 같은 패턴을 ([^/]+) 로 변환한다.
+  const pattern = escaped.replace(/\\\[.*?\\\]/g, "[^/]+");
+
+  return new RegExp(`^${pattern}$`);
+}
+
+// 경로가 매칭되는지 확인하는 함수
+export function isMatch(path: string, routeSet: Set<string>): boolean {
+  return [...routeSet].some((route) => {
+    return routeToRegex(route).test(path);
+  });
+}
