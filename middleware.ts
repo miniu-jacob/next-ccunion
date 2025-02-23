@@ -99,22 +99,9 @@ export default auth((req) => {
   console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
   // console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
-  // urlLocale 과 currentLocale 불일치 시 userLocale 기반 경로 수정
-  const modifiedUrl = req.nextUrl.clone();
-  if (urlLocale !== currentLocale && userLocale) {
-    modifiedUrl.pathname =
-      currentLocale === defaultLocale ? pathWithoutPrefix : `/${currentLocale}${pathWithoutPrefix}`;
-    console.log("[middleware - Step D] URL modified: ", modifiedUrl.pathname);
-  }
-
   // 공개 경로 처리
   if (isPublicRoute) {
-    return intlMiddleware(
-      Object.defineProperty(req, "nextUrl", {
-        value: modifiedUrl,
-        writable: true,
-      }),
-    );
+    return intlMiddleware(req);
   }
 
   // 비공개 경로 처리
