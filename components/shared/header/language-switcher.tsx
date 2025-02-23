@@ -57,7 +57,7 @@ export default function LanguageSwitcher() {
         <DropdownMenuRadioGroup value={locale}>
           {locales.map((c) => (
             // 현재 언어는 선택 불가능하게
-            <DropdownMenuRadioItem key={c.name} value={c.code} disabled={c.slug === locale}>
+            <DropdownMenuRadioItem key={c.name} value={c.slug} disabled={c.slug === locale}>
               {/* <div className="w-full flex items-center gap-2 text-sm">
                <Image src={c.icon} alt={c.name} width={28} height={28} />
                {c.name}
