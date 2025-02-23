@@ -43,7 +43,7 @@ export default auth((req) => {
   // [Step A] next-intl 미들웨어 (rewrite/locale 설정 등) 먼저 실행
   const { pathname } = req.nextUrl;
 
-  const locales = routing.locales;
+  // const locales = routing.locales;
   const defaultLocale = routing.defaultLocale;
 
   // 로그 : Accept-Language 헤더 확인
@@ -59,10 +59,10 @@ export default auth((req) => {
    *   - defaultLocale: 기본 언어
    *  ============================= */
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
-  const prefix = pathnameParts[0] || "";
+  // const prefix = pathnameParts[0] || "";
 
-  console.log("[middleware - Step B] pathname comes: ", pathname);
-  console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  // console.log("[middleware - Step B] pathname comes: ", pathname);
+  // console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -71,26 +71,19 @@ export default auth((req) => {
    *   - userLocale: 쿠키에서 추출한 언어
    *   - currentLocale: URL에서 추출한 언어(prefix) -> 쿠키 -> 기본 언어 순서
    *  ============================= */
-  const urlLocale = locales.includes(prefix) ? prefix : null;
+  // const urlLocale = locales.includes(prefix) ? prefix : null;
   const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
-  const currentLocale = userLocale || urlLocale || defaultLocale;
+  const currentLocale = userLocale || defaultLocale;
 
-  // Step 4: "/" 경로 접속 시 쿠키 기반으로 locale 적용
-  if (currentLocale !== urlLocale) {
-    const url = req.nextUrl.clone();
-    url.pathname = `/${userLocale}${req.nextUrl.pathname}`;
-    return NextResponse.redirect(url);
-  }
-
-  console.log(
-    "[middleware - Step C]: ",
-    "[urlLocale]: ",
-    urlLocale,
-    "[userLocale]: ",
-    userLocale,
-    "[currentLocale]: ",
-    currentLocale,
-  );
+  // console.log(
+  //   "[middleware - Step C]: ",
+  //   "[urlLocale]: ",
+  //   urlLocale,
+  //   "[userLocale]: ",
+  //   userLocale,
+  //   "[currentLocale]: ",
+  //   currentLocale,
+  // );
 
   /* PATH CHECK
    * =============================
@@ -98,7 +91,8 @@ export default auth((req) => {
    *   - pathWithoutPrefix: prefix를 제거한 경로
    *   - isPublicRoute: 요청된 경로가 공개 경로인지 확인
    * ============================= */
-  const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
+
+  const pathWithoutPrefix = `/${pathnameParts.slice(1).join("/")}` || "/";
   const isPublicRoute = isMatch(pathWithoutPrefix, publicPaths);
   const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths);
   console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
