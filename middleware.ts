@@ -73,7 +73,7 @@ export default auth((req) => {
    *  ============================= */
   const urlLocale = locales.includes(prefix) ? prefix : null;
   const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
-  const currentLocale = urlLocale || userLocale;
+  const currentLocale = userLocale || urlLocale || defaultLocale;
 
   console.log(
     "[middleware - Step C]: ",
