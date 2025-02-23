@@ -6,7 +6,6 @@ import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
 import { isMatch } from "./lib/utils";
-import { NextURL } from "next/dist/server/web/next-url";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -62,8 +61,8 @@ export default auth((req) => {
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
   const prefix = pathnameParts[0] || "";
 
-  console.log("[middleware - Step B] pathname comes: ", pathname);
-  console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  // console.log("[middleware - Step B] pathname comes: ", pathname);
+  // console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -76,15 +75,15 @@ export default auth((req) => {
   const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
   const currentLocale = userLocale || urlLocale || defaultLocale;
 
-  console.log(
-    "[middleware - Step C]: ",
-    "[urlLocale]: ",
-    urlLocale,
-    "[userLocale]: ",
-    userLocale,
-    "[currentLocale]: ",
-    currentLocale,
-  );
+  // console.log(
+  //   "[middleware - Step C]: ",
+  //   "[urlLocale]: ",
+  //   urlLocale,
+  //   "[userLocale]: ",
+  //   userLocale,
+  //   "[currentLocale]: ",
+  //   currentLocale,
+  // );
 
   /* PATH CHECK
    * =============================
@@ -95,8 +94,8 @@ export default auth((req) => {
   const pathWithoutPrefix = urlLocale ? `/${pathnameParts.slice(1).join("/")}` : pathname;
   const isPublicRoute = isMatch(pathWithoutPrefix, publicPaths);
   const isProtectedRoute = isMatch(pathWithoutPrefix, protectedPaths);
-  console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
-  console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
+  // console.log("[middleware - Step D] pathWithoutPrefix: ", pathWithoutPrefix);
+  // console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
   // console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
   // 공개 경로 처리
@@ -129,10 +128,10 @@ export default auth((req) => {
       maxAge: 60 * 60 * 24 * 30, // 30 days
       secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
     });
-    console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
+    // console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
   }
 
-  console.log("[middleware - Final] Response locale: ", currentLocale);
+  // console.log("[middleware - Final] Response locale: ", currentLocale);
 
   return response;
 });

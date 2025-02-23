@@ -26,8 +26,7 @@ import { defineRouting } from "next-intl/routing";
 export const routing = defineRouting({
   locales: i18n.locales.map((locale) => locale.slug),
   defaultLocale: i18n.defaultLocale,
-  localePrefix: { mode: "as-needed" },
-  localeDetection: false, // Accept-Language 헤더를 사용하지 않음
+  localePrefix: { mode: "always" },
   pathnames: {},
 });
 

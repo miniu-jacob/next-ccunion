@@ -5,12 +5,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggleButton } from "./theme-toggle-button";
 import { SideSheet } from "./side-sheet";
 import data from "@/lib/db/data/data";
-import { useLocale } from "next-intl";
 import LanguageSwitcher from "./language-switcher";
 
 export default function Header() {
-  const locale = useLocale();
-  console.log("[DEBUG] Header - locale: ", locale);
+  // const locale = useLocale();
+  // console.log("[DEBUG] Header - locale: ", locale);
   return (
     <header className="h-16 bg-background/40 sticky top-0 border-b px-8 backdrop-blur-sm flex items-center justify-between">
       {/* HEADER - 1: LOGO  */}
