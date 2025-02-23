@@ -6,6 +6,7 @@ import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
 import { isMatch } from "./lib/utils";
+import { clog } from "./lib/jlogger";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -54,7 +55,7 @@ export default auth((req) => {
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
   // const prefix = pathnameParts[0] || "";
 
-  // console.log("[middleware - Step B] pathname comes: ", pathname);
+  clog.log("[middleware - Step B] pathname comes: ", pathname);
   // console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
 
   /* LANGUAGE SETTINGS
@@ -116,14 +117,14 @@ export default auth((req) => {
    *   - a). NEXT_LOCALE 쿠키를 가져오지 못한 경우
    *   - b). NEXT_LOCALE 쿠키가 있지만, 현재 언어(currentLocale)와 다른 경우
    *  ============================= */
-  if (!req.cookies.get("NEXT_LOCALE") || req.cookies.get("NEXT_LOCALE")?.value !== currentLocale) {
-    response.cookies.set("NEXT_LOCALE", currentLocale, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-      secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
-    });
-    // console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
-  }
+  // if (!req.cookies.get("NEXT_LOCALE") || req.cookies.get("NEXT_LOCALE")?.value !== currentLocale) {
+  //   response.cookies.set("NEXT_LOCALE", currentLocale, {
+  //     path: "/",
+  //     maxAge: 60 * 60 * 24 * 30, // 30 days
+  //     secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
+  //   });
+  // }
+  // console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
 
   // console.log("[middleware - Final] Response locale: ", currentLocale);
 
@@ -134,5 +135,7 @@ export default auth((req) => {
  * next.js 미들웨어 설정
  * ========================================= */
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  // matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  // matcher: ["/", "/(ko|en|vn)/:path*"],
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };

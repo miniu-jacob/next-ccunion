@@ -27,9 +27,7 @@ export const routing = defineRouting({
   defaultLocale: "ko",
   // localeDetection: false,
   // localeCookie: { name: "NEXT_LOCALE" },
-  localePrefix: {
-    mode: "always",
-  },
+  localePrefix: "always",
   pathnames: {},
 });
 
