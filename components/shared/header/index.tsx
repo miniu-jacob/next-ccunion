@@ -10,6 +10,7 @@ import LanguageSwitcher from "./language-switcher";
 
 export default function Header() {
   const locale = useLocale();
+  console.log("[DEBUG] Header - locale: ", locale);
   return (
     <header className="h-16 bg-background/40 sticky top-0 border-b px-8 backdrop-blur-sm flex items-center justify-between">
       {/* HEADER - 1: LOGO  */}
@@ -29,7 +30,8 @@ export default function Header() {
       </div>
 
       <div className="hidden md:flex justify-end w-40 px-2">
-        <LanguageSwitcher key={locale} />
+        {/* <LanguageSwitcher key={locale} /> */}
+        <LanguageSwitcher />
       </div>
       {/* HEADER -3: LOGIN */}
       <div className="hidden md:flex items-center gap-2 px-2">
@@ -42,7 +44,7 @@ export default function Header() {
       </div>
       <div className="w-fit flex gap-4 items-center">
         <div className="md:hidden flex justify-end w-40 ">
-          <LanguageSwitcher key={locale} />
+          <LanguageSwitcher />
         </div>
         <ThemeToggleButton />
         <SideSheet />
