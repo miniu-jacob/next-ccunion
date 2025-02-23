@@ -28,7 +28,14 @@ export const routing = defineRouting({
   defaultLocale: i18n.defaultLocale,
   localeDetection: true,
   localeCookie: { name: "NEXT_LOCALE" },
-  localePrefix: { mode: "always" },
+  localePrefix: {
+    mode: "always",
+    prefixes: {
+      ko: "/ko",
+      en: "/en",
+      vn: "/vn",
+    },
+  },
   pathnames: {},
 });
 
