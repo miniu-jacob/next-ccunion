@@ -6,10 +6,11 @@ import { ThemeToggleButton } from "./theme-toggle-button";
 import { SideSheet } from "./side-sheet";
 import data from "@/lib/db/data/data";
 import LanguageSwitcher from "./language-switcher";
+import { useLocale } from "next-intl";
 
 export default function Header() {
-  // const locale = useLocale();
-  // console.log("[DEBUG] Header - locale: ", locale);
+  const locale = useLocale();
+  console.log("[DEBUG] Header - locale: ", locale);
   return (
     <header className="h-16 bg-background/40 sticky top-0 border-b px-8 backdrop-blur-sm flex items-center justify-between">
       {/* HEADER - 1: LOGO  */}
@@ -22,7 +23,7 @@ export default function Header() {
       {/* HEADER -2: MENUS */}
       <div className="hidden md:flex w-full justify-end space-x-4 items-center">
         {data.headerMenus.map((menu) => (
-          <Link key={menu.href} href={menu.href} className="text-base p-2">
+          <Link key={menu.href} href={`${menu.href}`} className="text-base p-2">
             {menu.name}
           </Link>
         ))}
