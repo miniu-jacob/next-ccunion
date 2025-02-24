@@ -29,7 +29,7 @@ export const routing = defineRouting({
   // localeDetection: false,
   // localeCookie: { name: "NEXT_LOCALE" },
   localePrefix: "always",
-  // pathnames,
+  pathnames: {},
 });
 
 export const { Link, redirect, usePathname, useRouter } = createNavigation(routing);
