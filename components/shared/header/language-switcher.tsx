@@ -22,10 +22,6 @@ import Image from "next/image";
  * - Secure: HTTPS 환경에서만 전송 (Vercel이라면 보통 자동 HTTPS)
  * - SameSite=Lax
  */
-// function setLocaleCookie(locale: string) {
-//   const maxAge = 60 * 60 * 24 * 365; // 1년
-//   document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${maxAge}; Secure; SameSite=Lax`;
-// }
 
 export function cleanPathname(pathname: string, locale: string) {
   const localePrefix = `/${locale}`;
@@ -50,6 +46,11 @@ export default function LanguageSwitcher() {
   const pathname = usePathname();
   // console.log("[DEBUG] LanguageSwitcher - locale: ", locale);
 
+  function setLocaleCookie(locale: string) {
+    const maxAge = 60 * 60 * 24 * 365; // 1년
+    document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${maxAge}; Secure; SameSite=Lax`;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="header-button h-16">
@@ -73,7 +74,13 @@ export default function LanguageSwitcher() {
                <Image src={c.icon} alt={c.name} width={28} height={28} />
                {c.name}
              </div> */}
-              <Link href={pathname} locale={c.slug} className="w-full flex items-center gap-2 text-sm">
+              <Link
+                href={pathname}
+                locale={c.slug}
+                className="w-full flex items-center gap-2 text-sm"
+                onClick={() => {
+                  setLocaleCookie(c.slug);
+                }}>
                 <Image src={c.icon} alt={c.name} width={28} height={28} />
                 {c.name}
               </Link>
