@@ -44,7 +44,7 @@ export default auth((req) => {
   // [Step A] next-intl 미들웨어 (rewrite/locale 설정 등) 먼저 실행
   const { pathname } = req.nextUrl;
 
-  // const locales = routing.locales;
+  const locales = routing.locales;
   const defaultLocale = routing.defaultLocale;
   /* URL PREFIX 추출
    * =============================
@@ -53,10 +53,12 @@ export default auth((req) => {
    *   - defaultLocale: 기본 언어
    *  ============================= */
   const pathnameParts = pathname.split("/").filter(Boolean); // 빈 문자열 제거
-  // const prefix = pathnameParts[0] || "";
+  const prefix = pathnameParts[0] || "";
+  const pathnameSegments = req.nextUrl.pathname.split("/");
 
   clog.log("[middleware - Step B] pathname comes: ", pathname);
-  // console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  clog.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  clog.log("[middleware - Step B] pathnameSegments: ", pathnameSegments);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -65,19 +67,19 @@ export default auth((req) => {
    *   - userLocale: 쿠키에서 추출한 언어
    *   - currentLocale: URL에서 추출한 언어(prefix) -> 쿠키 -> 기본 언어 순서
    *  ============================= */
-  // const urlLocale = locales.includes(prefix) ? prefix : null;
-  const userLocale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
+  const urlLocale = locales.includes(prefix as "ko" | "en" | "vn") ? prefix : null;
+  const userLocale = req.cookies.get("NEXT_LOCALE")?.value;
   const currentLocale = userLocale || defaultLocale;
 
-  // console.log(
-  //   "[middleware - Step C]: ",
-  //   "[urlLocale]: ",
-  //   urlLocale,
-  //   "[userLocale]: ",
-  //   userLocale,
-  //   "[currentLocale]: ",
-  //   currentLocale,
-  // );
+  console.log(
+    "[middleware - Step C]: ",
+    "[urlLocale]: ",
+    urlLocale,
+    "[userLocale]: ",
+    userLocale,
+    "[currentLocale]: ",
+    currentLocale,
+  );
 
   /* PATH CHECK
    * =============================
@@ -137,5 +139,6 @@ export default auth((req) => {
 export const config = {
   // matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
   // matcher: ["/", "/(ko|en|vn)/:path*"],
-  matcher: ['/((?!api|_next|.*\\..*).*)'],
+  // matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!api|image|_next|favicon.ico|_next/image|icons|_next/static|_vercel\\..*).*)"],
 };
