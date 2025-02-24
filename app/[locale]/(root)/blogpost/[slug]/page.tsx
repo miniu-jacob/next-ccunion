@@ -19,6 +19,7 @@ import matter from "gray-matter";
 import TableOfContentPage from "@/components/shared/contents/table-of-content";
 import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
 import path from "path";
+import { notFound } from "next/navigation";
 
 // URL: https://ondrejsevcik.com/blog/building-perfect-markdown-processor-for-my-blog
 
@@ -32,9 +33,9 @@ export async function generateStaticParams() {
   let fileList: string[]; // 파일 리스트
   try {
     fileList = fs.readdirSync(contentDir, "utf-8");
-    console.log("[DEBUG] getStaticProps - File successfully read: ", fileList);
+    console.log("[DEBUG] getStaticParams - File successfully read: ", fileList);
   } catch (error) {
-    console.error("[ERROR] getStaticProps - Failed to read directory: ", error);
+    console.error("[ERROR] getStaticParams - Failed to read directory: ", error);
     fileList = [];
   }
 
@@ -69,6 +70,7 @@ const BlogPostPage = async ({ params }: BlogPostPageProps) => {
     fileContent = fs.readFileSync(filePath, "utf-8");
   } catch (error) {
     console.error(`[ERROR] Failed to load blog post: ${slug} : , ${error}`);
+    notFound();
   }
   // Read File
 
