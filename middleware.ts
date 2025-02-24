@@ -6,7 +6,6 @@ import authConfig from "./lib/auth.config";
 import { protectedPaths, publicPaths } from "./lib/db/data/routes-data";
 import { NextResponse } from "next/server";
 import { isMatch } from "./lib/utils";
-import { clog } from "./lib/jlogger";
 
 /*PUBLIC ROUTE (NO LOGIN REQUIRED)
  * =========================================
@@ -56,9 +55,9 @@ export default auth((req) => {
   const prefix = pathnameParts[0] || "";
   const pathnameSegments = req.nextUrl.pathname.split("/");
 
-  clog.log("[middleware - Step B] pathname comes: ", pathname);
-  clog.log("[middleware - Step B] prefix extracted: ", pathnameParts);
-  clog.log("[middleware - Step B] pathnameSegments: ", pathnameSegments);
+  console.log("[middleware - Step B] pathname comes: ", pathname);
+  console.log("[middleware - Step B] prefix extracted: ", pathnameParts);
+  console.log("[middleware - Step B] pathnameSegments: ", pathnameSegments);
 
   /* LANGUAGE SETTINGS
    * =============================
@@ -95,6 +94,25 @@ export default auth((req) => {
   console.log("[middleware - Step D] isPublicRoute: ", isPublicRoute);
   console.log("[middleware - Step D] isProtectedRoute: ", isProtectedRoute);
 
+  // 모든 경로에 대해 intlMiddleware 실행(잘못된 경로는 외부처리)
+  let response = NextResponse.next(); // 기본 응답 생성
+
+  /* COOKIE SETTINGS
+   * =============================
+   * [Step D] NEXT_LOCALE 쿠키 설정
+   *   - 조건에 따라 쿠키를 설정한다.
+   *   - a). NEXT_LOCALE 쿠키를 가져오지 못한 경우
+   *   - b). NEXT_LOCALE 쿠키가 있지만, 현재 언어(currentLocale)와 다른 경우
+   *  ============================= */
+  if (!req.cookies.get("NEXT_LOCALE") || req.cookies.get("NEXT_LOCALE")?.value !== currentLocale) {
+    response.cookies.set("NEXT_LOCALE", currentLocale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
+    });
+    console.log("[middleware - Step D] NEXT_LOCALE cookie set early: ", currentLocale);
+  }
+
   // 공개 경로 처리
   if (isPublicRoute) {
     return intlMiddleware(req);
@@ -109,26 +127,10 @@ export default auth((req) => {
     }
   }
 
-  // 모든 경로에 대해 intlMiddleware 실행(잘못된 경로는 외부처리)
-  const response = intlMiddleware(req);
-
-  /* COOKIE SETTINGS
-   * =============================
-   * [Step D] NEXT_LOCALE 쿠키 설정
-   *   - 조건에 따라 쿠키를 설정한다.
-   *   - a). NEXT_LOCALE 쿠키를 가져오지 못한 경우
-   *   - b). NEXT_LOCALE 쿠키가 있지만, 현재 언어(currentLocale)와 다른 경우
-   *  ============================= */
-  // if (!req.cookies.get("NEXT_LOCALE") || req.cookies.get("NEXT_LOCALE")?.value !== currentLocale) {
-  //   response.cookies.set("NEXT_LOCALE", currentLocale, {
-  //     path: "/",
-  //     maxAge: 60 * 60 * 24 * 30, // 30 days
-  //     secure: process.env.NODE_ENV === "production", // VERCEL HTTPS support
-  //   });
-  // }
   // console.log("[middleware - Step D] NEXT_LOCALE cookie set: ", currentLocale);
 
   // console.log("[middleware - Final] Response locale: ", currentLocale);
+  response = intlMiddleware(req);
 
   return response;
 });
